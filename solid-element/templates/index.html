@@ -8,16 +8,61 @@
 </head>
 <body>
     <h1>{{ message }}</h1>
+    <h1>solid-element</h1>
+
 
     <hr>
 
-    <h3>1. デフォルト設定のカウンター</h3>
+    <h3>1. デフォルト設定のカウンター  &emsp;my-counter</h3>
     <!-- 標準のHTMLタグのように記述可能 -->
     <my-counter></my-counter>
 
-    <h3>2. サーバーサイド（MiniJinja）から初期値を渡すカウンター</h3>
+    <h3>2. サーバーサイド（MiniJinja）から初期値を渡すカウンター &emsp;my-counter</h3>
     <!-- MiniJinjaの変数をそのまま属性（Attribute）に埋め込める -->
     <my-counter initial="{{ initial_count }}" step="5"></my-counter>
+
+    <h3>3. 外部から値を変更する（Property / Attribute の操作）&emsp;my-counter</h3>
+
+
+    <!-- ボタンを押すと、JavaScript経由でカウンターの step 属性を動的に書き換える例 -->
+<my-counter id="dynamic-counter" initial="10" step="1"></my-counter>
+
+<button id="change-step-btn">ステップ数を「10」に変更する</button>
+
+<script>
+  const counterEl = document.getElementById('dynamic-counter');
+  const btn = document.getElementById('change-step-btn');
+
+  btn.addEventListener('click', () => {
+    // 属性（Attribute）を直接書き換えると、SolidJS 内部の props.step も自動更新される
+    counterEl.setAttribute('step', '10');
+
+    // または、プロパティとして直接代入することも可能です
+    // counterEl.step = "10";
+  });
+</script>
+
+<h3>4. コンポーネント内部から外部へ通知する（カスタムイベント）&emsp;my-counter2</h3>
+<my-counter2 id="event-counter" initial="0"></my-counter2>
+
+<div id="log-box">ここにログが出力されます</div>
+
+<script>
+  const eventCounter = document.getElementById('event-counter');
+  const logBox = document.getElementById('log-box');
+
+  // SolidJS 内部から発火されたカスタムイベントを検知
+  eventCounter.addEventListener('countchange', (event) => {
+    // event.detail の中に SolidJS 側でセットしたデータが入っている
+    const newCount = event.detail.currentCount;
+    logBox.innerText = `カウンターのイベントを検知！現在の値: ${newCount}`;
+    
+    if (newCount >= 10) {
+      alert("10に達しました！");
+    }
+  });
+</script>
+
 
 </body>
 </html>
