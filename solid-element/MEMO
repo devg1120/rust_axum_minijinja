@@ -1,0 +1,17 @@
+
+
+この構成のメリット
+
+• HTML の自由度向上: サーバーサイド（Axum + MiniJinja）で大枠の画面（レイアウトやSEO用テキスト）を組み立てつつ、動的なミニアプリやリッチなUIパーツ（フォーム、グラフ、ボタンなど）だけを SolidJS でピンポイントに埋め込めます。
+• マウント位置の縛りがない: document.getElementById('root') のような特定の一箇所にアプリ全体をマウントする必要がなく、HTML 内の好きな場所にタグを配置するだけで動作します。
+
+
+cd frontend
+yarn
+npm run build
+
+cd ..
+
+cargo run
+
+
