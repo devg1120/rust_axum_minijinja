@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE & WebSocket 併用テスト（スタンドアロン版）</title>
+    <style>
+        body { font-family: sans-serif; margin: 30px; display: flex; gap: 40px; }
+        .box { border: 1px solid #ccc; padding: 20px; width: 300px; border-radius: 8px; }
+        #chat-box { height: 150px; border: 1px solid #eee; overflow-y: auto; padding: 5px; margin-bottom: 10px; background: #fafafa; }
+        p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- ① SSE エリア -->
+    <div class="box">
+        <h2>① SSE エリア</h2>
+        <p>サーバー時刻（2秒毎）：</p>
+        <div id="server-time">接続中...</div>
+    </div>
+
+    <!-- ② WebSocket エリア -->
+    <div class="box">
+        <h2>② WebSocket エリア</h2>
+        <div id="chat-box"></div>
+        
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="文字を入力..." required autocomplete="off">
+            <button type="submit">送信</button>
+        </form>
+    </div>
+
+    <!-- 🛠️ 標準機能 (Vanilla JS) によるリアルタイム通信ロジック -->
+    <script>
+        // ----------------------------------------------------
+        // 1. SSE (Server-Sent Events) の実装
+        // ----------------------------------------------------
+        const sseSource = new EventSource('/sse');
+        const timeDisplay = document.getElementById('server-time');
+
+        // サーバーからデータを受信したときの処理
+        sseSource.onmessage = function(event) {
+            console.log("【SSE受信】", event.data);
+            timeDisplay.innerHTML = event.data;
+        };
+
+        // 接続エラー時の処理
+        sseSource.onerror = function(error) {
+            console.error("【SSEエラー】", error);
+            timeDisplay.innerText = "接続エラー。再接続を試みています...";
+        };
+
+
+        // ----------------------------------------------------
+        // 2. WebSocket の実装
+        // ----------------------------------------------------
+        // 現在のプロトコル (httpならws, httpsならwss) を自動判定して接続
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const wsUrl = wsProtocol + window.location.host + '/ws';
+        const socket = new WebSocket(wsUrl);
+
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+
+        // サーバーからWebSocketでデータ（HTML断片）を受信したときの処理
+        socket.onmessage = function(event) {
+            console.log("【WS受信】", event.data);
+            // チャットボックスの末尾にサーバーから送られてきたHTMLをそのまま挿入
+            chatBox.insertAdjacentHTML('beforeend', event.data);
+            // 最新のメッセージが見えるように自動スクロール
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        // フォーム送信時の処理
+        chatForm.onsubmit = function(event) {
+            event.preventDefault();
+            const messageText = chatInput.value.trim();
+            if (messageText === '') return;
+
+            // Axumサーバーの仕様に合わせて "chat_message=内容" の形式で送信
+            const payload = "chat_message=" + encodeURIComponent(messageText);
+            
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(payload);
+                chatForm.reset(); // 入力欄をクリア
+            } else {
+                alert("WebSocketが接続されていません。");
+            }
+        };
+
+        socket.onopen = function() {
+            console.log("【WS接続】成功しました。");
+        };
+
+        socket.onerror = function(error) {
+            console.error("【WSエラー】", error);
+        };
+    </script>
+</body>
+</html>

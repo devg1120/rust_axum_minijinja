@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE & WebSocket 併用サンプル</title>
+    <!-- HTMXコアと各種拡張プラグインの読み込み -->
+    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com/dist/ext/sse.js"></script>
+    <script src="https://unpkg.com/dist/ext/ws.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 30px; display: flex; gap: 40px; }
+        .box { border: 1px solid #ccc; padding: 20px; width: 300px; border-radius: 8px; }
+        #chat-box { height: 150px; border: 1px solid #eee; overflow-y: auto; padding: 5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. SSEセクション（サーバーからのプッシュ通知） -->
+    <div class="box" hx-ext="sse" sse-connect="/sse">
+        <h2>① SSE エリア</h2>
+        <p>サーバーから2秒おきに時刻が送られてきます：</p>
+        <!-- sse-swap で指定したイベント名（time-update）を検知してここを書き換える -->
+        <div id="server-time" sse-swap="time-update">接続中...</div>
+    </div>
+
+    <!-- 2. WebSocketセクション（双方向チャット） -->
+    <div class="box" hx-ext="ws" ws-connect="/ws">
+        <h2>② WebSocket エリア</h2>
+        <div id="chat-box">
+            <!-- サーバーから送られてくるHTML（hx-swap-oob="beforeend"）がここに追記される -->
+        </div>
+        
+        <!-- ws-send を付与することで、フォーム送信時にWS経由でデータが送られる -->
+        <form ws-send hx-on="htmx:wsAfterSend: this.reset()">
+            <input type="text" name="chat_message" placeholder="メッセージを入力..." required>
+            <button type="submit">送信</button>
+        </form>
+    </div>
+
+</body>
+</html>
+
