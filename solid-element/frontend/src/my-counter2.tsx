@@ -30,6 +30,25 @@ function CounterComponent2(
 
   return (
     <div>
+    <style>{`
+          p {
+            margin: 0 0 10px 0;
+            color: red;
+          }
+          button {
+	     background-color: var(--counter-btn-color, #4f46e5);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+          button:hover {
+            background-color: yellow;
+            color: blue;
+          }
+        `}</style>
+
       <p>Count: {count()}</p>
       <button onClick={handleIncrement}>+{step()}</button>
     </div>
