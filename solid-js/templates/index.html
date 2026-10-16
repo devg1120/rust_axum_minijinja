@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    
+    <!-- 1. ViteでビルドされたSolidJSのスタイルシートを読み込み -->
+    <!-- ※実際のビルド後のファイル名（ハッシュ値）に合わせて自動変換するか、固定名で出力する設定が必要です -->
+    <link rel="stylesheet" href="/assets/index.css">
+</head>
+<body>
+
+    <!-- 2. MiniJinjaでサーバーサイドレンダリングされた静的コンテンツ（任意） -->
+    <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px;">
+        <p><strong>Server Message:</strong> {{ initial_message }}</p>
+    </div>
+
+    <!-- 3. SolidJSがマウントされるルート要素 -->
+    <div id="root"></div>
+
+    <!-- 4. ViteでビルドされたSolidJSのメインロジックを読み込み -->
+    <script type="module" src="/assets/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+cd frontend
+yarn
+npm run build
+
+cd ..
+
+cargo run
+
+
