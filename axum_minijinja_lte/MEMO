@@ -1,0 +1,7 @@
+cargo run
+
+
+cargo build
+
+target/debug/axum_sqlite_minijinja_demo.exe
+

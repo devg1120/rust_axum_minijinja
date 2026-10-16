@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo リスト</title>
+</head>
+<body>
+    <h1>GS Todo リスト</h1>
+    
+    <!-- タスク追加フォーム -->
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="新しいタスクを入力" required>
+        <button type="submit">追加</button>
+    </form>
+
+    <!-- タスク一覧 -->
+    <ul>
+        {% for todo in todos %}
+        <li>[{{ todo.id }}] {{ todo.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
