@@ -1,0 +1,19 @@
+solid-element  テスト＆ビルド環境併用
+
+npm create vite my-solid-element-app -- --template solid-ts
+
+cd my-solid-element-app
+npm i solid-element
+
+
+npm run dev
+    open http://127.0.0.1:5173/
+
+npm run  build
+    ./dist
+    favicon.svg
+    icons.svg
+    my-counter.es.js
+    my-counter.umd.js
+
+
